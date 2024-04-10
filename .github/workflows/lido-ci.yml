@@ -32,12 +32,14 @@ jobs:
     name: 'LIDO Kontrol CI'
     runs-on: [self-hosted, linux, kaas]
     steps:
+      - uses: actions/setup-node@v4
+
       - name: 'Check out code'
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.JENKINS_GITHUB_PAT }}
           fetch-depth: 0
-      
+     
       - name: Report Pending Status
         run: |
           curl -L \
@@ -62,7 +64,25 @@ jobs:
           ref: ${{ github.event.inputs.branch_name }}
           fetch-depth: 0
           submodules: 'recursive'
-  
+
+      - name: Get Kontrol Version
+        id: kontrol-version
+        shell: bash
+        run: |
+          pushd lido
+          echo "KONTROL_VERSION=$(cat versions.json | jq -r .kontrol)" > "$GITHUB_OUTPUT"
+
+      - name: Install Kontrol
+        uses: runtimeverification/install-kontrol@v1.0.1
+        with:
+          version: "v${{ steps.kontrol-version.outputs.KONTROL_VERSION }}"
+    
+      # - name: "Download KCFG Cache"
+      #   shell: bash
+      #   run: |
+      #     pushd optimism/packages/contracts-bedrock > /dev/null
+      #     kaas-cli --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} download -d ./kout-proofs/
+
       - name: 'Run Kontrol'
         shell: bash
         run: |
@@ -73,7 +93,15 @@ jobs:
           git submodule update --init --recursive
           # Lido uses npm to install OZ contracts, so won't be caught with git submodule
           npm install
-          find . -name "run-kontrol.sh" -type f -exec {} ${{ github.event.inputs.extra_args }} \;
+          find . -name "run-kontrol.sh" -type f -exec {} local ${{ github.event.inputs.extra_args }} \;
+
+      # - name: 'Upload KCFG Cache Results to Summary'
+      #   if: always()
+      #   uses: actions/upload-artifact@v4.3.1
+      #   with:
+      #     name: Kontrol Results
+      #     path: optimism/**/results-*.tar.gz
+      #     retention-days: 5
 
       - name: 'Upload KCFG results.tar.gz to GH Summary'
         if: always()
