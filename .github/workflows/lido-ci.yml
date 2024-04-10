@@ -71,6 +71,8 @@ jobs:
           pushd lido/ > /dev/null
           # Need to checkout submodules, GH action doesn't do this properly. 
           git submodule update --init --recursive
+          # Lido uses npm to install OZ contracts, so won't be caught with git submodule
+          npm install
           find . -name "run-kontrol.sh" -type f -exec {} ${{ github.event.inputs.extra_args }} \;
 
       - name: 'Upload KCFG results.tar.gz to GH Summary'
