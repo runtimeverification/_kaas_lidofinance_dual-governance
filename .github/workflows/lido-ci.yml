@@ -95,7 +95,8 @@ jobs:
           git submodule update --init --recursive
           # Lido uses npm to install OZ contracts, so won't be caught with git submodule
           npm install
-          find . -name "run-kontrol.sh" -type f -exec {} local ${{ github.event.inputs.extra_args }} \;
+          ./test/kontrol/scripts/run-kontrol.sh local ${{ github.event.inputs.extra_args }}
+          # find . -name "run-kontrol.sh" -type f -exec {} local ${{ github.event.inputs.extra_args }} \;
 
       # - name: 'Upload KCFG Cache Results to Summary'
       #   if: always()
