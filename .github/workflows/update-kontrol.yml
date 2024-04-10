@@ -1,0 +1,18 @@
+---
+name: "Update Kontrol Version"
+on:
+  push:
+    branches:
+      - "_update-deps/runtimeverification/kontrol"
+jobs:
+  update-version:
+    runs-on: [self-hosted, linux, flyweight]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update Kontrol Version
+        run: |
+          echo "Update the version.json on Rev of Kontrol"
+          cat deps/kontrol_release > 
+          KONTROL_VERSION=$(cat deps/kontrol_release)
+          jq --arg kontrol_version "$KONTROL_VERSION" '.kontrol = $kontrol_version' versions.json > tmp.$$.json && mv tmp.$$.json versions.json
