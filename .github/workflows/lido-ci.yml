@@ -31,6 +31,8 @@ jobs:
   lido:
     name: 'LIDO Kontrol CI'
     runs-on: [self-hosted, linux, kaas]
+    env:
+      GH_TOKEN: ${{ secrets.JENKINS_GITHUB_PAT}}
     steps:
       - uses: actions/setup-node@v4
         with:
