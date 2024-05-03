@@ -58,10 +58,10 @@ jobs:
             }' \
             https://api.github.com/repos/${{ github.event.inputs.org }}/${{ github.event.inputs.repository }}/statuses/${{ github.event.inputs.statuses_sha }}
 
-      - name: "Install KaaS"
-        uses: runtimeverification/install-kaas@v0.1.0
-        with:
-          github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
+      # - name: "Install KaaS"
+      #   uses: runtimeverification/install-kaas@v0.1.0
+      #   with:
+      #     github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
                 
       - name: "Checkout LIDO (RV Fork)"
         uses: actions/checkout@v4
@@ -81,9 +81,10 @@ jobs:
           echo "KONTROL_VERSION=$(cat versions.json | jq -r .kontrol)" > "$GITHUB_OUTPUT"
 
       - name: Install Kontrol
-        uses: runtimeverification/install-kontrol@v1.0.1
+        uses: runtimeverification/install-kontrol@v1.0.2
         with:
           version: "v${{ steps.kontrol-version.outputs.KONTROL_VERSION }}"
+          github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
     
       # - name: "Download KCFG Cache"
       #   shell: bash
