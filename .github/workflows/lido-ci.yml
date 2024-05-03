@@ -78,7 +78,7 @@ jobs:
         shell: bash
         run: |
           pushd lido
-          echo "KONTROL_VERSION=$(cat versions.json | jq -r .kontrol)" > "$GITHUB_OUTPUT"
+          echo "KONTROL_VERSION=$(cat test/kontrol/scripts/versions.json | jq -r .kontrol)" > "$GITHUB_OUTPUT"
 
       - name: Install Kontrol
         uses: runtimeverification/install-kontrol@v1.0.2
