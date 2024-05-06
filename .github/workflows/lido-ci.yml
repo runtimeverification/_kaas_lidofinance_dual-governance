@@ -73,18 +73,18 @@ jobs:
           fetch-depth: 0
           submodules: 'recursive'
 
-      - name: Get Kontrol Version
-        id: kontrol-version
-        shell: bash
-        run: |
-          pushd lido
-          echo "KONTROL_VERSION=$(cat test/kontrol/scripts/versions.json | jq -r .kontrol)" > "$GITHUB_OUTPUT"
+      # - name: Get Kontrol Version
+      #   id: kontrol-version
+      #   shell: bash
+      #   run: |
+      #     pushd lido
+      #     echo "KONTROL_VERSION=$(cat test/kontrol/scripts/versions.json | jq -r .kontrol)" > "$GITHUB_OUTPUT"
 
-      - name: Install Kontrol
-        uses: runtimeverification/install-kontrol@v1.0.2
-        with:
-          version: "v${{ steps.kontrol-version.outputs.KONTROL_VERSION }}"
-          github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
+      # - name: Install Kontrol
+      #   uses: runtimeverification/install-kontrol@v1.0.2
+      #   with:
+      #     version: "v${{ steps.kontrol-version.outputs.KONTROL_VERSION }}"
+      #     github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
     
       # - name: "Download KCFG Cache"
       #   shell: bash
@@ -101,7 +101,7 @@ jobs:
           git submodule update --init --recursive
           # Lido uses npm to install OZ contracts, so won't be caught with git submodule
           npm install
-          ./test/kontrol/scripts/run-kontrol.sh local ${{ github.event.inputs.extra_args }}
+          ./test/kontrol/scripts/run-kontrol.sh ${{ github.event.inputs.extra_args }}
 
       # - name: 'Upload KCFG Cache Results to Summary'
       #   if: always()
