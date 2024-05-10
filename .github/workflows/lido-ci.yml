@@ -89,6 +89,7 @@ jobs:
       - name: "Download KCFG Cache"
         shell: bash
         run: |
+          pushd lido/ > /dev/null
           kaas-cli download --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
 
       - name: 'Run Kontrol'
@@ -105,6 +106,7 @@ jobs:
       - name: 'Upload KCFG Cache Results to KaaS'
         if: always()
         run: |
+          pushd lido/ > /dev/null
           kaas-cli upload --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
 
       - name: 'Upload KCFG Results to Summary'
