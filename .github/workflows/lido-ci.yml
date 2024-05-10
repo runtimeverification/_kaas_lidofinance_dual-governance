@@ -58,10 +58,10 @@ jobs:
             }' \
             https://api.github.com/repos/${{ github.event.inputs.org }}/${{ github.event.inputs.repository }}/statuses/${{ github.event.inputs.statuses_sha }}
 
-      # - name: "Install KaaS"
-      #   uses: runtimeverification/install-kaas@v0.1.0
-      #   with:
-      #     github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
+      - name: "Install KaaS"
+        uses: runtimeverification/install-kaas@v0.2.1
+        with:
+          github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
                 
       - name: "Checkout LIDO (RV Fork)"
         uses: actions/checkout@v4
@@ -86,11 +86,10 @@ jobs:
       #     version: "v${{ steps.kontrol-version.outputs.KONTROL_VERSION }}"
       #     github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
     
-      # - name: "Download KCFG Cache"
-      #   shell: bash
-      #   run: |
-      #     pushd optimism/packages/contracts-bedrock > /dev/null
-      #     kaas-cli --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} download -d ./kout-proofs/
+      - name: "Download KCFG Cache"
+        shell: bash
+        run: |
+          kaas-cli download --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
 
       - name: 'Run Kontrol'
         shell: bash
@@ -103,15 +102,12 @@ jobs:
           npm install
           ./test/kontrol/scripts/run-kontrol.sh ${{ github.event.inputs.extra_args }}
 
-      # - name: 'Upload KCFG Cache Results to Summary'
-      #   if: always()
-      #   uses: actions/upload-artifact@v4.3.1
-      #   with:
-      #     name: Kontrol Results
-      #     path: optimism/**/results-*.tar.gz
-      #     retention-days: 5
+      - name: 'Upload KCFG Cache Results to KaaS'
+        if: always()
+        run: |
+          kaas-cli upload --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
 
-      - name: 'Upload KCFG results.tar.gz to GH Summary'
+      - name: 'Upload KCFG Results to Summary'
         if: always()
         uses: actions/upload-artifact@v4.3.1
         with:
