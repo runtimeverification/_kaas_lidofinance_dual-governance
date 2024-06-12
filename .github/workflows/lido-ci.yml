@@ -90,7 +90,7 @@ jobs:
         shell: bash
         run: |
           pushd lido/ > /dev/null
-          kaas-cli download --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
+          kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork
 
       - name: 'Run Kontrol'
         shell: bash
@@ -107,7 +107,7 @@ jobs:
         if: always()
         run: |
           pushd lido/ > /dev/null
-          kaas-cli upload --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
+          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork
 
       - name: 'Upload KCFG Results to Summary'
         if: always()
