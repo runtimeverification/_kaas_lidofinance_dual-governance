@@ -90,7 +90,7 @@ jobs:
         shell: bash
         run: |
           pushd lido/ > /dev/null
-          kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
+          kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Run Kontrol'
         shell: bash
@@ -109,8 +109,8 @@ jobs:
           pushd lido/ > /dev/null
           CURRENT_COMMIT_SHA=$(git rev-parse --short HEAD)
           echo "Current short commit SHA: $CURRENT_COMMIT_SHA"
-          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d "./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:${{ github.event.inputs.statuses_sha}}"
-          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
+          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d "./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:${{ github.event.inputs.statuses_sha}}"
+          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Upload KCFG Results to Summary'
         if: always()
