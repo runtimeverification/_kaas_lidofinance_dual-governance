@@ -66,12 +66,12 @@ jobs:
       - name: "Checkout LIDO (RV Fork)"
         uses: actions/checkout@v4
         with:
-          repository: 'runtimeverification/_audits_lidofinance_dual-governance'
+          repository: '${{ github.event.inputs.org }}/${{ github.event.inputs.repository }}'
           token: ${{ secrets.JENKINS_GITHUB_PAT }}
           path: 'lido'
           ref: ${{ github.event.inputs.branch_name }}
           fetch-depth: 0
-          submodules: 'recursive'
+      #    submodules: 'recursive'
 
       # - name: Get Kontrol Version
       #   id: kontrol-version
@@ -90,7 +90,7 @@ jobs:
         shell: bash
         run: |
           pushd lido/ > /dev/null
-          kaas-cli download --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
+          kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Run Kontrol'
         shell: bash
@@ -107,7 +107,10 @@ jobs:
         if: always()
         run: |
           pushd lido/ > /dev/null
-          kaas-cli upload --vault ${{ secrets.LIDO_VAULT }} --token ${{ secrets.LIDO_TOKEN }} -d ./out/
+          CURRENT_COMMIT_SHA=$(git rev-parse --short HEAD)
+          echo "Current short commit SHA: $CURRENT_COMMIT_SHA"
+          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d "./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:${{ github.event.inputs.statuses_sha}}"
+          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Upload KCFG Results to Summary'
         if: always()
