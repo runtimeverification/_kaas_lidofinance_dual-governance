@@ -90,13 +90,6 @@ jobs:
         shell: bash
         run: |
           pushd lido/ > /dev/null
-          if [ -n "${{ github.event.before }}" ]; then
-            PREVIOUS_COMMIT_SHA=${{ github.event.before }}
-            echo "Previous commit SHA: $PREVIOUS_COMMIT_SHA"
-            kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:$PREVIOUS_COMMIT_SHA
-          else
-            echo "No previous commit SHA found."
-          fi
           kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Run Kontrol'
@@ -116,7 +109,7 @@ jobs:
           pushd lido/ > /dev/null
           CURRENT_COMMIT_SHA=$(git rev-parse --short HEAD)
           echo "Current short commit SHA: $CURRENT_COMMIT_SHA"
-          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d "./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:$CURRENT_COMMIT_SHA"
+          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d "./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:${{ github.event.inputs.statuses_sha}}"
           kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Upload KCFG Results to Summary'
