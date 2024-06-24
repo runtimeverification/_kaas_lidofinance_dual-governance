@@ -86,11 +86,11 @@ jobs:
       #     version: "v${{ steps.kontrol-version.outputs.KONTROL_VERSION }}"
       #     github-token: ${{ secrets.JENKINS_GITHUB_PAT }}
     
-      - name: "Download KCFG Cache"
-        shell: bash
-        run: |
-          pushd lido/ > /dev/null
-          kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
+      #- name: "Download KCFG Cache"
+       # shell: bash
+        #run: |
+         # pushd lido/ > /dev/null
+          #kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./out/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
 
       - name: 'Run Kontrol'
         shell: bash
