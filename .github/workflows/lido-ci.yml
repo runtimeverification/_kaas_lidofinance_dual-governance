@@ -110,8 +110,7 @@ jobs:
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
           tag=$(git rev-parse --short HEAD:./test/kontrol/scripts/run-kontrol.sh)
           kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:$tag
-          kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:latest
-
+          
       - name: 'Upload KCFG Results to Summary'
         if: always()
         uses: actions/upload-artifact@v4.3.1
