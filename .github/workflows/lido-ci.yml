@@ -6,9 +6,6 @@ on:
       branch_name:
         description: 'Branch Name to Test From'
         required: true
-      extra_args:
-        description: 'Additional Arguments to for run_kontro.sh '
-        required: false
       statuses_sha:
         description: 'SHA of the commit to report back to'
         required: false
@@ -90,7 +87,7 @@ jobs:
         shell: bash
         run: |
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
-          tag=$(git rev-parse --short HEAD:./test/kontrol/scripts/run-kontrol.sh)
+          tag=$(git hash-object ./test/kontrol/scripts/run-kontrol.sh)
           kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:$tag
 
       - name: 'Run Kontrol'
@@ -102,13 +99,13 @@ jobs:
           git submodule update --init --recursive
           # Lido uses npm to install OZ contracts, so won't be caught with git submodule
           npm install
-          ./test/kontrol/scripts/run-kontrol.sh ${{ github.event.inputs.extra_args }}
+          ./test/kontrol/scripts/run-kontrol.sh
 
       - name: 'Upload KCFG Cache Results to KaaS'
         if: always()
         run: |
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
-          tag=$(git rev-parse --short HEAD:./test/kontrol/scripts/run-kontrol.sh)
+          tag=$(git has --short HEAD:./test/kontrol/scripts/run-kontrol.sh)
           kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:$tag
           
       - name: 'Upload KCFG Results to Summary'
