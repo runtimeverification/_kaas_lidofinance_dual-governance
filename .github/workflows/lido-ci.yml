@@ -42,6 +42,7 @@ jobs:
           fetch-depth: 0
 
       - name: Report Pending Status
+        if: ${{ github.event.inputs.statuses_sha != ''  }}
         run: |
           curl -L -X POST \
             -H "Accept: application/vnd.github+json" \
@@ -87,7 +88,7 @@ jobs:
         shell: bash
         run: |
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
-          tag=$(git hash-object ./test/kontrol/scripts/run-kontrol.sh)
+          tag=$(git hash-object ./kontrol.toml)
           kaas-cli download --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:$tag
 
       - name: 'Run Kontrol'
@@ -105,7 +106,7 @@ jobs:
         if: always()
         run: |
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
-          tag=$(git has --short HEAD:./test/kontrol/scripts/run-kontrol.sh)
+          tag=$(git hash-object ./kontrol.toml)
           kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:$tag
           
       - name: 'Upload KCFG Results to Summary'
@@ -117,7 +118,7 @@ jobs:
           retention-days: 5
 
       - name: Report Pass Status
-        if: always() && success()
+        if: always() && success() && ${{ github.event.inputs.statuses_sha != '' }}
         run: |
             curl -L \
               -X POST \
@@ -133,7 +134,7 @@ jobs:
               }'
         
       - name: Report Failure Status
-        if: always() && failure()
+        if: always() && failure() && ${{ github.event.inputs.statuses_sha != '' }}
         run: |
             curl -L -X POST \
             -H "Accept: application/vnd.github+json" \
