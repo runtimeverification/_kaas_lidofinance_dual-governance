@@ -86,6 +86,7 @@ jobs:
     
       - name: "Download KCFG Cache"
         shell: bash
+        continue-on-error: true
         run: |
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
           tag=$(git hash-object ./kontrol.toml)
@@ -103,20 +104,12 @@ jobs:
           ./test/kontrol/scripts/run-kontrol.sh
 
       - name: 'Upload KCFG Cache Results to KaaS'
-        if: always()
+        continue-on-error: true
         run: |
           pushd ${{ github.event.inputs.repository }}/ > /dev/null
           tag=$(git hash-object ./kontrol.toml)
           kaas-cli upload --token ${{ secrets.LIDO_TOKEN }} -d ./kout/ runtimeverification/_audits_lidofinance_dual-governance_fork:$tag
           
-      - name: 'Upload KCFG Results to Summary'
-        if: always()
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          name: Kontrol Results
-          path: ./**/results-*.tar.gz
-          retention-days: 5
-
       - name: Report Pass Status
         if: always() && success() && ${{ github.event.inputs.statuses_sha != '' }}
         run: |
