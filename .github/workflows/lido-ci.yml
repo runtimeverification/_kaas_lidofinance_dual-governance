@@ -74,7 +74,7 @@
             KONTROL_DIR =$(find . -name 'kontrol.toml' -exec dirname {} \;)
             pushd ${{ github.event.inputs.repository }}/$KONTROL_DIR > /dev/null
             tag=$(git hash-object kontrol.toml)
-            kaas-cli download --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout-proofs/
+            kaas-cli download --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout/
       
         # Some Setups Require using `pushd` to setup execution in the correct client directory
         # Some Setups require an additional step to pull all the necessary files, examples are `npm install` or `git submodule update --recursive`
@@ -98,4 +98,4 @@
             KONTROL_DIR =$(find . -name 'kontrol.toml' -exec dirname {} \;)
             pushd ${{ github.event.inputs.repository }}/$KONTROL_DIR > /dev/null
             tag=$(git hash-object kontrol.toml)
-            kaas-cli upload --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout-proofs/
+            kaas-cli upload --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout/
