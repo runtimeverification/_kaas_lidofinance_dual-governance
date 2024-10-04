@@ -90,8 +90,8 @@
             # Call Kontrol Directly and using 'local' mode or container to run in docker
             export FOUNDRY_PROFILE=kontrol-properties 
             KONTROL_VERSION=$(cat test/kontrol/scripts/versions.json | jq -r '.kontrol')
-            kaas-cli run -m ${{ github.event.inputs.mode }} -kv "${KONTROL_VERSION}"
-   
+            kaas-cli run -m ${{ github.event.inputs.mode }} -kv v"${KONTROL_VERSION}"
+
         - name: 'KaaS Cache Upload'
           if: ${{ github.event.inputs.cache == 'true' }}
           continue-on-error: true
