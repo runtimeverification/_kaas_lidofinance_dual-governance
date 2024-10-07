@@ -7,16 +7,16 @@
           description: 'Branch Name of Clients code to Clone'
           required: true
         org:
-          description: 'Organization to report statuses back to'
+          description: 'Organization to Clone Code from'
           required: true
         repository:
-          description: 'Repository to report statuses back to'
+          description: 'Repository to Clone Code from'
           required: true
         kaas_org:
-          description: 'KaaS Organization to report statuses back to'
+          description: 'KaaS Organization to store kcfg cache results to'
           required: true
         kaas_vault:
-          description: 'KaaS Vault to report statuses back to'
+          description: 'KaaS Vault to store kcfg cache results to'
           required: true
         cache:
           description: 'Skip Cache Upload and Download'
