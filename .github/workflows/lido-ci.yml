@@ -37,6 +37,12 @@
       name: 'Test Proofs'
       runs-on: [self-hosted, linux, kaas]
       steps:
+        - name: "Install Node"
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20'
+            cache: 'npm'
+
         - name: 'Check out code'
           uses: actions/checkout@v4
           with:
