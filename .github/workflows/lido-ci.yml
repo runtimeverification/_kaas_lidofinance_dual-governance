@@ -87,6 +87,8 @@
         # Some Setups require an additional step to pull all the necessary files, examples are `npm install` or `git submodule update --recursive`
         - name: Start Telemetry
           uses: catchpoint/workflow-telemetry-action@v2.0.0
+          with:
+            proc_trace_sys_enable: true
 
         - name: 'Run Kontrol'
           shell: bash
