@@ -75,7 +75,6 @@
             KONTROL_DIR =$(find . -name 'kontrol.toml' -exec dirname {} \;)
             pushd ${{ github.event.inputs.repository }}/$KONTROL_DIR > /dev/null
             # Install Test Dependencies
-            npm install
             tag=$(git hash-object kontrol.toml)
             kaas-cli download --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout/
       
@@ -89,6 +88,8 @@
           run: |
             # Step into Runtime Folder
             pushd ${{ github.event.inputs.repository }} > /dev/null
+            # Install Test Dependencies
+            npm install
             # Call Kontrol Directly and using 'local' mode or container to run in docker
             export FOUNDRY_PROFILE=kontrol-properties 
             KONTROL_VERSION=$(cat test/kontrol/scripts/versions.json | jq -r '.kontrol')
