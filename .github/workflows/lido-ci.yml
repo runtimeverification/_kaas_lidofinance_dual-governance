@@ -26,6 +26,14 @@
           description: 'Set KaaS run mode'
           required: false
           default: 'container'
+        notify:
+          description: 'Report Statuses back to Commit Sha'
+          required: false
+          default: 'false'
+        commit_sha:
+          description: 'Commit Sha to report statuses back to'
+          required: false
+          default: ''
   
   # Stop in progress workflows on the same branch and same workflow to use latest committed code
   concurrency:
@@ -56,6 +64,20 @@
             app-id: ${{ secrets.KAAS_APP_ID }}
             private-key: ${{ secrets.KAAS_APP_SSH_PRV_KEY }}
             owner: ${{ github.event.inputs.org }}
+
+        - name: Report Pending Status
+          run: |
+            curl -L -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ steps.generate-token.outputs.token }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${{ github.event.inputs.org }}/${{ github.event.inputs.repository }}/statuses/${{ github.event.inputs.commit_sha }}" \
+              -d '{
+                "state": "pending",
+                "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "description": "Proofs Pending",
+                "context": "runtimeverification/_kaas_lidofinance_dual-governance"
+              }'
 
         - name: Checkout CLIENT Code
           uses: actions/checkout@v4
@@ -112,3 +134,51 @@
             pushd ${{ github.event.inputs.repository }}/$KONTROL_DIR > /dev/null
             tag=$(git hash-object kontrol.toml)
             kaas-cli upload --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout/
+
+        - name: Report Pass Status
+          if: success() && ${{ github.event.inputs.notify == 'true' }}
+          run: |
+              curl -L \
+                -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ steps.generate-token.outputs.token }}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                https://api.github.com/repos/${{ github.event.inputs.org}}/${{ github.event.inputs.repository}}/statuses/${{ github.event.inputs.commit_sha }} \
+                -d '{
+                  "state": "success",
+                  "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                  "description": "Optimism Proof Execution Success",
+                  "context": "runtimeverification/proof-runner"
+                }'
+
+        - name: Report Failure Status
+          if: failure() && ${{ github.event.inputs.notify == 'true' }}
+          run: |
+              curl -L \
+                -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ steps.generate-token.outputs.token }}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                https://api.github.com/repos/${{ github.event.inputs.org}}/${{ github.event.inputs.repository}}/statuses/${{ github.event.inputs.commit_sha }} \
+                -d '{
+                  "state": "failure",
+                  "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                  "description": "Proof Execution Failed",
+                  "context": "runtimeverification/proof-runner"
+                }'
+  
+        - name: Report Failure Status
+          if: cancelled() && ${{ github.event.inputs.notify == 'true' }}
+          run: |
+              curl -L \
+                -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ steps.generate-token.outputs.token }}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                https://api.github.com/repos/${{ github.event.inputs.org}}/${{ github.event.inputs.repository}}/statuses/${{ github.event.inputs.commit_sha }} \
+                -d '{
+                  "state": "failure",
+                  "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                  "description": "Cancelled",
+                  "context": "runtimeverification/proof-runner"
+                }'
