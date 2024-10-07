@@ -74,6 +74,8 @@
           run: |
             KONTROL_DIR =$(find . -name 'kontrol.toml' -exec dirname {} \;)
             pushd ${{ github.event.inputs.repository }}/$KONTROL_DIR > /dev/null
+            # Install Test Dependencies
+            npm install
             tag=$(git hash-object kontrol.toml)
             kaas-cli download --token ${{ secrets.CLIENT_TOKEN }} ${{ github.event.inputs.kaas_org }}/${{ github.event.inputs.kaas_vault }}:$tag -d kout/
       
