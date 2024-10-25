@@ -41,6 +41,6 @@
         - name: 'Run Kontrol'
           shell: bash
           run: |
-            pushd yearn-v3-term-vault/ > /dev/null
+            pushd _audits_lidofinance_dual-governance_fork/ > /dev/null
             export FOUNDRY_PROFILE=kontrol-properties 
             kaas-cli run -m remote --watch -t ${{ secrets.CLIENT_TOKEN }} --branch ${{ github.event.inputs.branch_name }}  -vs runtimeverification/_audits_lidofinance_dual-governance_fork 
